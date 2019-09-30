@@ -1,10 +1,31 @@
 import speech_recognition as sr
 from commands.commands import getcommands
-
+import pyautogui
 r=sr.Recognizer()
 print(sr.Microphone.list_microphone_names())
+"""
+Commands:
+    '1': 'fullstop',
+    '2': 'space',
+    '3': 'backspace',
+    
+    '4' :'enter',
+    '5' :'tab',
+    '6': 'caps',
+    
+"""
 
-
+commands = {
+    '1': '.',
+    '2': 'space',
+    'tu': 'space',
+    '3': 'backspace',
+    'free': 'backspace',
+    '4': 'enter',
+    '5': 'tab',
+    '6': 'capslock',
+    'sex': 'capslock',
+}
 with sr.Microphone() as source:
     r.adjust_for_ambient_noise(source,duration=1)
     # r.energy_threshold = 600
@@ -13,20 +34,22 @@ with sr.Microphone() as source:
     text=""
     while True:
         cnt+=1
-        if(cnt%10==0):
-            print("say anything : ",cnt)
-            audio = r.record(source, duration=5)
-            with open("audio.wav", "wb") as f:
-                f.write(audio.get_wav_data())
-            try:
-                recordedtext = r.recognize_google(audio)
-                print(recordedtext)
-                if(recordedtext.split(" ")[0]=="command"):
-                    getcommands(recordedtext,text)
-                else:
-                    text+=" "
-                    text+=recordedtext
-            except:
-                print("sorry, could not recognise")
+        # if(cnt%10==0):
+        print("say anything : ",cnt)
+        audio = r.record(source, duration=5)
+        with open("audio.wav", "wb") as f:
+            f.write(audio.get_wav_data())
+        try:
+            recordedtext = r.recognize_google(audio)
+            recordedtext = recordedtext.lower()
+            print(recordedtext)
+            if(recordedtext in commands):
+                pyautogui.press(commands[recordedtext])
+            else:
+                pyautogui.typewrite(recordedtext)
+
+
+        except:
+            print("sorry, could not recognise")
 
 
